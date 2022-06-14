@@ -1,6 +1,6 @@
 /* C_binomial_queue
  * 
- * Copyright 2002 Hsueh-Jen Yang
+ * Copyright 2022 Hsueh-Jen Yang
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
