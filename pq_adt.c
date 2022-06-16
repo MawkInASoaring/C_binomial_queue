@@ -134,6 +134,7 @@ priq_nodep pq_insert(pri_quep quep,int key,void* ele) {
 	if(newp==NULL) return NULL;
 	newp->ele =ele; newp->key = key;
 	if(quep->hnodep==NULL) { quep->hnodep=newp; return newp;}
+	if(pq_getnode(quep, key)!=NULL) { printf("duplicated key for binomial heap?, this will ignore the insert op!\n"); return NULL;}
 	existp = quep->hnodep; newp->next_sib = existp; 
 	/*handle pre-link*/ existp->pre_sib = newp;
 	curp = newp;
@@ -236,7 +237,28 @@ priq_nodep pq_getnode(pri_quep quep,int key) {
 	priq_nodep curp=NULL, prep=NULL, nxtp=NULL;
 	if(pq_isempty(quep)) return NULL;
 	curp = quep->hnodep;
-	
+	prep= NULL;
+	while(curp) { 
+		cmpflag = cmp_func(key,curp->key);
+		
+		switch(cmpflag) {
+				 case -1: prep = (curp->next_sib)? curp->next_sib: (curp->parent)? curp->parent->next_sib:NULL; 
+				 		  curp = curp->first_child; 
+				 break;
+				 case  1: curp = curp->next_sib;		
+				 break;
+				 case  0:  
+				 	return curp;
+				 	curp=NULL; prep=NULL;
+				 break;
+				 default: curp=NULL; prep=NULL; printf("err condition\n"); return NULL;
+				 break;
+		}
+		if(curp==NULL) {
+			curp=prep; prep=(prep && prep->parent)? prep->parent->next_sib:NULL; 
+		}
+	}
+	/*
 	while(curp) { 
 		cmpflag = cmp_func(key,curp->key); 
 		if(cmpflag < 0) { // if the root of the current tree is more priority than the end_key
@@ -260,7 +282,8 @@ priq_nodep pq_getnode(pri_quep quep,int key) {
 			return curp;
 		}	
 		curp = curp->next_sib;
-	}
+	}*/
+	
 	return NULL;
 } 
 void pq_clear(pri_quep quep) {
